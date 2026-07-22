@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⬡ ECHO VAULT ::</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ============================================================
+           RESET & FONTS
+           ============================================================ */
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #050a08;
+            color: #c0d6d6;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           BACKGROUND CYBER GRID (ANIMÉ)
+           ============================================================ */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes gridMove {
+            0% {
+                transform: perspective(600px) rotateX(5deg) translateY(0);
+            }
+            100% {
+                transform: perspective(600px) rotateX(5deg) translateY(60px);
+            }
+        }
+        .cyber-grid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(5, 10, 8, 0.8) 100%);
+        }
+
+        /* ============================================================
+           ECRAN DE CHARGEMENT (BOOT SEQUENCE)
+           ============================================================ */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050a08;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            color: #00e5ff;
+            font-size: 1.2rem;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #loader .boot-logo {
+            font-size: 3rem;
+            text-shadow: 0 0 60px #00e5ff;
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+        }
+        #loader .boot-log {
+            font-size: 0.8rem;
+            color: #4a8a9a;
+            max-width: 500px;
+            width: 80%;
+            text-align: left;
+            border-left: 3px solid #00e5ff;
+            padding-left: 15px;
+            max-height: 200px;
+            overflow-y: hidden;
+        }
+        #loader .boot-log .line {
+            opacity: 0;
+            animation: bootFade 0.3s forwards;
+        }
+        #loader .boot-log .line:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        #loader .boot-log .line:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        #loader .boot-log .line:nth-child(3) {
+            animation-delay: 0.7s;
+        }
+        #loader .boot-log .line:nth-child(4) {
+            animation-delay: 1.0s;
+        }
+        #loader .boot-log .line:nth-child(5) {
+            animation-delay: 1.3s;
+        }
+        @keyframes bootFade {
+            0% {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #0a1a1f;
+            border-top: 3px solid #00e5ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-top: 20px;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+           LAYOUT PRINCIPAL
+           ============================================================ */
+        .app {
+            max-width: 1500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            background: rgba(8, 14, 10, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 0 80px rgba(0, 229, 255, 0.03), inset 0 0 80px rgba(0, 229, 255, 0.02);
+        }
+
+        /* ============================================================
+           EFFET CRT (SCANLINES)
+           ============================================================ */
+        .crt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.08) 0px,
+                    rgba(0, 0, 0, 0.08) 2px,
+                    transparent 2px,
+                    transparent 6px);
+        }
+        .crt::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           NAVIGATION
+           ============================================================ */
+        .navbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .navbar .brand {
+            font-size: 1.9rem;
+            font-weight: normal;
+            color: #00e5ff;
+            text-shadow: 0 0 40px #00e5ff, 0 0 80px rgba(0, 229, 255, 0.2);
+            letter-spacing: 5px;
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .navbar .brand i {
+            color: #ff00b8;
+            text-shadow: 0 0 40px #ff00b8;
+        }
+        .navbar a {
+            color: #66ccdd;
+            text-decoration: none;
+            padding: 8px 18px;
+            border: 1px solid transparent;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            transition: 0.3s ease;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .navbar a::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #00e5ff;
+            transition: 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .navbar a:hover::before,
+        .navbar a.active::before {
+            width: 60%;
+        }
+        .navbar a:hover {
+            color: #00e5ff;
+            background: rgba(0, 229, 255, 0.05);
+        }
+        .navbar a.active {
+            color: #00e5ff;
+            background: rgba(0, 229, 255, 0.08);
+            border-color: rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.05);
+        }
+
+        /* ============================================================
+           PAGES
+           ============================================================ */
+        .page {
+            display: none;
+            animation: fadeSlide 0.4s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================
+           STATS CARDS (GLASS)
+           ============================================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            padding: 18px 10px;
+            text-align: center;
+            border-radius: 12px;
+            transition: 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.03), transparent 70%);
+            opacity: 0;
+            transition: 0.4s;
+        }
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+        .stat-card:hover {
+            border-color: #00e5ff;
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.05);
+        }
+        .stat-card .num {
+            font-size: 2.6rem;
+            color: #00e5ff;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: #4a8a9a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* ============================================================
+           TOOLBAR (FILTRES)
+           ============================================================ */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            background: rgba(8, 15, 11, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #00e5ff;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+        }
+        .toolbar input,
+        .toolbar select {
+            background: rgba(5, 10, 7, 0.8);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: #00e5ff;
+            padding: 10px 15px;
+            font-family: inherit;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 140px;
+            transition: 0.3s;
+        }
+        .toolbar input:focus,
+        .toolbar select:focus {
+            border-color: #00e5ff;
+            outline: none;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.08);
+        }
+        .toolbar input::placeholder {
+            color: #2a5a6a;
+        }
+
+        /* ============================================================
+           TABLE (ARCHIVES)
+           ============================================================ */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 35px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            background: rgba(5, 10, 7, 0.4);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            padding: 15px 14px;
+            background: rgba(10, 18, 13, 0.8);
+            color: #00e5ff;
+            border-bottom: 2px solid rgba(0, 229, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: normal;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s;
+        }
+        th:hover {
+            color: #66ddff;
+            background: rgba(0, 229, 255, 0.04);
+        }
+        th i {
+            margin-left: 8px;
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+            vertical-align: middle;
+        }
+        tr:hover td {
+            background: rgba(0, 229, 255, 0.02);
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            border: 1px solid #00e5ff;
+            background: rgba(0, 229, 255, 0.06);
+            color: #00e5ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-verified {
+            color: #00ff41;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        .status-unverified {
+            color: #ff3b3b;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+        .btn-sm {
+            background: transparent;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: #00e5ff;
+            padding: 5px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .btn-sm:hover {
+            background: #00e5ff;
+            color: #050a08;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+        }
+        .highlight {
+            background: rgba(255, 0, 184, 0.3);
+            padding: 0 4px;
+            border-radius: 3px;
+            color: #ff00b8;
+        }
+
+        /* ============================================================
+           OSINT TOOLS (10 Modules)
+           ============================================================ */
+        .osint-section {
+            margin: 15px 0 25px 0;
+        }
+        .osint-section h2 {
+            color: #00e5ff;
+            font-weight: normal;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+        }
+        .osint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .osint-card {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 22px;
+            border-radius: 14px;
+            transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+        .osint-card:hover {
+            border-color: rgba(255, 0, 184, 0.3);
+            box-shadow: 0 0 60px rgba(255, 0, 184, 0.03), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transform: translateY(-5px) scale(1.01);
+        }
+        .osint-card h3 {
+            color: #66ddff;
+            font-weight: normal;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            border-bottom: 1px dashed rgba(0, 229, 255, 0.1);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .osint-card h3 i {
+            color: #ff00b8;
+            text-shadow: 0 0 20px rgba(255, 0, 184, 0.2);
+        }
+        .osint-card input,
+        .osint-card textarea {
+            width: 100%;
+            background: rgba(5, 10, 7, 0.8);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            color: #c0d6d6;
+            padding: 10px 14px;
+            font-family: inherit;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .osint-card input:focus,
+        .osint-card textarea:focus {
+            border-color: #00e5ff;
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.04);
+        }
+        .osint-card textarea {
+            resize: vertical;
+        }
+        .osint-card button {
+            background: transparent;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: #00e5ff;
+            padding: 7px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .osint-card button:hover {
+            background: #00e5ff;
+            color: #050a08;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+            border-color: #00e5ff;
+        }
+        .osint-output {
+            margin-top: 14px;
+            background: rgba(3, 6, 3, 0.8);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #7ababa;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            border-left: 3px solid rgba(0, 229, 255, 0.2);
+            line-height: 1.7;
+        }
+        .osint-output img.qr {
+            max-width: 100%;
+            height: auto;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #0a1a1f;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00e5ff, #ff00b8);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* ============================================================
+           TEAM PAGE (AVEC AVATARS)
+           ============================================================ */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .team-card {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 25px 20px 20px;
+            border-radius: 14px;
+            text-align: center;
+            transition: 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #00e5ff, #ff00b8);
+            opacity: 0;
+            transition: 0.4s;
+        }
+        .team-card:hover::before {
+            opacity: 1;
+        }
+        .team-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+        .team-card .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 2px solid rgba(0, 229, 255, 0.2);
+            overflow: hidden;
+            transition: 0.3s;
+            background: #0a120d;
+        }
+        .team-card .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .team-card:hover .avatar {
+            border-color: #ff00b8;
+            box-shadow: 0 0 30px rgba(255, 0, 184, 0.15);
+        }
+        .team-card .name {
+            font-size: 1.1rem;
+            color: #66ddff;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .team-card .role {
+            font-size: 0.75rem;
+            display: inline-block;
+            padding: 3px 16px;
+            border-radius: 20px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid;
+        }
+        .team-card .role.owner {
+            color: #ff00b8;
+            border-color: #ff00b8;
+            background: rgba(255, 0, 184, 0.08);
+        }
+        .team-card .role.leaker {
+            color: #ffaa00;
+            border-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.08);
+        }
+        .team-card .role.contributor {
+            color: #00aaff;
+            border-color: #00aaff;
+            background: rgba(0, 170, 255, 0.08);
+        }
+        .team-card .role.admin {
+            color: #00ff41;
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.08);
+        }
+        .team-card .role.moderator {
+            color: #aa66ff;
+            border-color: #aa66ff;
+            background: rgba(170, 102, 255, 0.08);
+        }
+        .team-card .role.founder {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        /* ============================================================
+           CONTACT / ACCÈS (STATIC)
+           ============================================================ */
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 10px;
+        }
+        .contact-card {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 30px 25px;
+            border-radius: 14px;
+            transition: 0.4s ease;
+        }
+        .contact-card:hover {
+            border-color: rgba(0, 229, 255, 0.25);
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.03);
+        }
+        .contact-card h3 {
+            color: #66ddff;
+            font-weight: normal;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+        }
+        .contact-card h3 i {
+            color: #ff00b8;
+            text-shadow: 0 0 20px rgba(255, 0, 184, 0.15);
+        }
+        .badge-restricted {
+            display: inline-block;
+            background: rgba(255, 0, 0, 0.15);
+            border: 1px solid #ff3b3b;
+            color: #ff3b3b;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .btn-discord {
+            display: inline-block;
+            background: #5865F2;
+            color: #fff !important;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: inherit;
+            transition: 0.3s;
+            margin-top: 8px;
+            border: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .btn-discord:hover {
+            background: #4752c4;
+            box-shadow: 0 0 40px rgba(88, 101, 242, 0.3);
+            transform: scale(1.02);
+            color: #fff !important;
+        }
+        .contact-stats {
+            margin-top: 10px;
+        }
+        .contact-stats .stat-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+        }
+        .contact-stats .stat-line:last-child {
+            border-bottom: none;
+        }
+        .contact-stats .stat-line .label {
+            color: #4a8a9a;
+        }
+        .contact-stats .stat-line .value {
+            color: #00e5ff;
+            font-weight: bold;
+        }
+        .contact-stats .stat-line .value.warning {
+            color: #ffaa00;
+        }
+        .contact-stats .stat-line .value.danger {
+            color: #ff3b3b;
+        }
+        .notice-reset {
+            margin-top: 15px;
+            font-size: 0.7rem;
+            border-left: 3px solid #ffaa00;
+            padding-left: 12px;
+            color: #ffaa00;
+            background: rgba(255, 170, 0, 0.03);
+            padding: 10px 12px;
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+           STATS PAGE (Graphiques)
+           ============================================================ */
+        .stats-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .chart-box {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 25px;
+            border-radius: 14px;
+        }
+        .chart-box h4 {
+            color: #66ddff;
+            font-weight: normal;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+        .bar-item .label {
+            min-width: 80px;
+            font-size: 0.8rem;
+            color: #4a8a9a;
+        }
+        .bar-item .bar-track {
+            flex: 1;
+            height: 8px;
+            background: #0a1a1f;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .bar-item .bar-track .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease;
+            background: linear-gradient(90deg, #00e5ff, #ff00b8);
+        }
+        .bar-item .value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #00e5ff;
+        }
+
+        /* ============================================================
+           ACTIVITY FEED (ACCUEIL)
+           ============================================================ */
+        .feed-container {
+            background: rgba(5, 10, 7, 0.6);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .feed-container::-webkit-scrollbar {
+            width: 4px;
+            background: #0a1a1f;
+        }
+        .feed-container::-webkit-scrollbar-thumb {
+            background: #00e5ff;
+            border-radius: 10px;
+        }
+        .feed-item {
+            font-size: 0.8rem;
+            color: #4a8a9a;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.03);
+            display: flex;
+            gap: 15px;
+        }
+        .feed-item .time {
+            color: #2a5a6a;
+            min-width: 80px;
+        }
+        .feed-item .msg {
+            color: #7ababa;
+        }
+        .feed-item .msg i {
+            color: #ff00b8;
+            margin-right: 8px;
+        }
+
+        /* ============================================================
+           ABOUT
+           ============================================================ */
+        .about-content {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 30px;
+            border-radius: 14px;
+            line-height: 1.9;
+        }
+        .about-content h3 {
+            color: #00e5ff;
+            margin-bottom: 15px;
+        }
+        .about-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        .about-content ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.04);
+        }
+        .about-content ul li i {
+            color: #00e5ff;
+            width: 28px;
+        }
+        .about-content ul li i.fa-skull {
+            color: #ff00b8;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #1f4a5a;
+            border-top: 1px solid rgba(0, 229, 255, 0.05);
+            padding-top: 20px;
+            letter-spacing: 3px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 700px) {
+            .navbar .brand {
+                font-size: 1.3rem;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .osint-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-charts {
+                grid-template-columns: 1fr;
+            }
+            .team-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 450px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    ECRAN DE CHARGEMENT
+    ============================================================ -->
+    <div id="loader">
+        <div class="boot-logo"><i class="fas fa-eye"></i> ECHO_VAULT</div>
+        <div class="boot-log">
+            <div class="line">> INITIALIZING KERNEL... [OK]</div>
+            <div class="line">> LOADING OSINT MODULES... [OK]</div>
+            <div class="line">> DECRYPTING LOCAL DATABASE... [OK]</div>
+            <div class="line">> ESTABLISHING SECURE CHANNEL... [OK]</div>
+            <div class="line">> SYSTEM READY. WELCOME, OPERATOR.</div>
+        </div>
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- ============================================================
+    EFFETS
+    ============================================================ -->
+    <div class="cyber-grid"></div>
+    <div class="crt"></div>
+
+    <!-- ============================================================
+    APPLICATION
+    ============================================================ -->
+    <div class="app">
+
+        <!-- NAVIGATION -->
+        <nav class="navbar">
+            <div class="brand"><i class="fas fa-eye"></i> ECHO_VAULT</div>
+            <a href="#page-accueil" class="active" data-page="page-accueil"><i class="fas fa-home"></i> Accueil</a>
+            <a href="#page-archives" data-page="page-archives"><i class="fas fa-database"></i> Archives</a>
+            <a href="#page-outils" data-page="page-outils"><i class="fas fa-microchip"></i> Outils</a>
+            <a href="#page-stats" data-page="page-stats"><i class="fas fa-chart-bar"></i> Stats</a>
+            <a href="#page-team" data-page="page-team"><i class="fas fa-users"></i> Équipe</a>
+            <a href="#page-contact" data-page="page-contact"><i class="fas fa-door-open"></i> Accès</a>
+            <a href="#page-about" data-page="page-about"><i class="fas fa-info-circle"></i> À propos</a>
+        </nav>
+
+        <!-- ==========================================================
+        PAGE 1 : ACCUEIL
+        ========================================================== -->
+        <section id="page-accueil" class="page active">
+            <div style="margin-bottom: 25px; border-left: 5px solid #ff00b8; padding-left: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-archive"></i> Tableau de bord</h2>
+                <p style="color:#4a8a9a;">Console centrale · Surveillance des archives et des flux OSINT.</p>
+            </div>
+
+            <div class="stats-row" id="statsRow">
+                <div class="stat-card"><div class="num" id="totalLeaks">0</div><span class="label">Total archives</span></div>
+                <div class="stat-card"><div class="num" id="totalCategories">0</div><span class="label">Catégories</span></div>
+                <div class="stat-card"><div class="num" id="verifiedCount">0</div><span class="label">Vérifiées</span></div>
+                <div class="stat-card"><div class="num">10</div><span class="label">Outils OSINT</span></div>
+            </div>
+
+            <div style="margin-top:10px;">
+                <h4 style="color:#4a8a9a; font-weight:normal; letter-spacing:2px; margin-bottom:10px;"><i class="fas fa-bolt" style="color:#ff00b8;"></i> FLUX D'ACTIVITÉ</h4>
+                <div class="feed-container" id="activityFeed">
+                    <div class="feed-item"><span class="time">[SYSTEM]</span><span class="msg"><i class="fas fa-check-circle"></i> ECHO_VAULT v4.2 opérationnel.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 2 : ARCHIVES
+        ========================================================== -->
+        <section id="page-archives" class="page">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-list"></i> Archives</h2>
+            </div>
+
+            <div class="toolbar">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher (titre ou ID)...">
+                <select id="categoryFilter">
+                    <option value="all">📂 Toutes les catégories</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="all">🔀 Tous les statuts</option>
+                    <option value="Vérifié">✅ Vérifié</option>
+                    <option value="Non vérifié">❌ Non vérifié</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="id">ID <i class="fas fa-sort"></i></th>
+                            <th data-sort="title">Titre <i class="fas fa-sort"></i></th>
+                            <th>Catégorie</th>
+                            <th data-sort="date">Date <i class="fas fa-sort"></i></th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leakTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 3 : OUTILS OSINT
+        ========================================================== -->
+        <section id="page-outils" class="page">
+            <div class="osint-section">
+                <h2><i class="fas fa-microchip"></i> OSINT TOOLKIT :: 10 modules</h2>
+                <div class="osint-grid">
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-map-pin"></i> IP Geoloc</h3>
+                        <input type="text" id="ipInput" placeholder="Ex: 8.8.8.8" value="8.8.8.8">
+                        <button onclick="lookupIP()"><i class="fas fa-search"></i> Localiser</button>
+                        <div class="osint-output" id="ipOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-fingerprint"></i> Hash SHA-256</h3>
+                        <input type="text" id="hashInput" placeholder="Texte à hasher">
+                        <button onclick="generateHash()"><i class="fas fa-cog"></i> Générer</button>
+                        <div class="osint-output" id="hashOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-file-alt"></i> Analyse Texte</h3>
+                        <textarea id="textInput" rows="2" placeholder="Collez du texte..."></textarea>
+                        <button onclick="analyzeText()"><i class="fas fa-chart-bar"></i> Analyser</button>
+                        <div class="osint-output" id="textOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-lock"></i> Force du MDP</h3>
+                        <input type="text" id="passInput" placeholder="Mot de passe">
+                        <button onclick="checkPass()"><i class="fas fa-shield-alt"></i> Tester</button>
+                        <div class="osint-output" id="passOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-exchange-alt"></i> Base64</h3>
+                        <input type="text" id="base64Input" placeholder="Texte ou Base64">
+                        <div>
+                            <button onclick="encodeBase64()"><i class="fas fa-lock"></i> Encoder</button>
+                            <button onclick="decodeBase64()"><i class="fas fa-unlock"></i> Décoder</button>
+                        </div>
+                        <div class="osint-output" id="base64Output">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-server"></i> DNS Lookup</h3>
+                        <input type="text" id="dnsInput" placeholder="Ex: google.com" value="google.com">
+                        <button onclick="dnsLookup()"><i class="fas fa-globe"></i> Résoudre</button>
+                        <div class="osint-output" id="dnsOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-qrcode"></i> QR Code</h3>
+                        <input type="text" id="qrInput" placeholder="Texte ou URL" value="https://github.com">
+                        <button onclick="generateQR()"><i class="fas fa-print"></i> Générer</button>
+                        <div class="osint-output" id="qrOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-code"></i> Texte ↔ Binaire</h3>
+                        <input type="text" id="binaryInput" placeholder="Texte ou binaire (ex: 0100...)">
+                        <div>
+                            <button onclick="textToBinary()"><i class="fas fa-arrow-right"></i> Texte → Binaire</button>
+                            <button onclick="binaryToText()"><i class="fas fa-arrow-left"></i> Binaire → Texte</button>
+                        </div>
+                        <div class="osint-output" id="binaryOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-radar"></i> Port Scanner</h3>
+                        <input type="text" id="portInput" placeholder="Ex: 192.168.1.1" value="scanme.nmap.org">
+                        <button onclick="scanPorts()"><i class="fas fa-bolt"></i> Scanner</button>
+                        <div class="progress-bar"><div class="fill" id="portProgress"></div></div>
+                        <div class="osint-output" id="portOutput">En attente...</div>
+                    </div>
+
+                    <div class="osint-card">
+                        <h3><i class="fas fa-key"></i> Password Generator</h3>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <input type="number" id="passLen" value="16" min="8" max="64" style="flex:1;min-width:60px;">
+                            <button onclick="generatePassword()"><i class="fas fa-dice"></i> Générer</button>
+                        </div>
+                        <div class="osint-output" id="passGenOutput">Cliquez sur Générer...</div>
+                        <button onclick="copyPassword()" style="margin-top:6px; border-color:#ff00b8; color:#ff00b8;"><i class="fas fa-copy"></i> Copier</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 4 : STATISTIQUES
+        ========================================================== -->
+        <section id="page-stats" class="page">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-chart-pie"></i> Analyses & Statistiques</h2>
+            </div>
+            <div class="stats-charts" id="statsChartsContainer">
+                <!-- Rempli par JS -->
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 5 : ÉQUIPE (AVEC AVATARS)
+        ========================================================== -->
+        <section id="page-team" class="page">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-users"></i> Équipe ECHO_VAULT</h2>
+                <p style="color:#4a8a9a;">Les opérateurs derrière la vault. <span id="teamCount"></span> membres.</p>
+            </div>
+            <div class="team-grid" id="teamGrid">
+                <!-- Rempli par JS -->
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 6 : CONTACT / ACCÈS (STATIC)
+        ========================================================== -->
+        <section id="page-contact" class="page">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-door-open"></i> Accès restreint</h2>
+                <p style="color:#4a8a9a;">Serveur non communautaire · Données modifiables manuellement dans le code.</p>
+            </div>
+
+            <div class="contact-container">
+                <!-- Carte Discord -->
+                <div class="contact-card">
+                    <h3><i class="fab fa-discord"></i> Rejoindre le Discord</h3>
+                    <span class="badge-restricted"><i class="fas fa-lock"></i> Privé · Sur invitation</span>
+                    <p style="color:#4a8a9a; font-size:0.9rem; margin-bottom:15px;">
+                        Contactez un administrateur (Owner ou Admin) pour obtenir un lien d'invitation valide.
+                    </p>
+                    <a href="#" id="discordLink" target="_blank" class="btn-discord">
+                        <i class="fab fa-discord"></i> Accéder au serveur
+                    </a>
+                    <p style="font-size:0.7rem; color:#2a5a6a; margin-top:12px;">
+                        ⚠️ Lien valable uniquement pour les membres autorisés.
+                    </p>
+                </div>
+
+                <!-- Carte Capacité & Reset -->
+                <div class="contact-card">
+                    <h3><i class="fas fa-users-slash"></i> Capacité &amp; Politique</h3>
+                    <div class="contact-stats">
+                        <div class="stat-line">
+                            <span class="label">👥 Membres actuels</span>
+                            <span class="value"><span id="currentMembers">7</span> / <span id="maxMembers">12</span></span>
+                        </div>
+                        <div class="stat-line">
+                            <span class="label">📉 Places disponibles</span>
+                            <span class="value warning" id="availableSpots">5</span>
+                        </div>
+                        <div class="stat-line">
+                            <span class="label">🔄 Prochain reset</span>
+                            <span class="value" id="resetCountdown" style="color:#ffaa00;">01j 12h 30m 00s</span>
+                        </div>
+                    </div>
+                    <div class="notice-reset">
+                        <i class="fas fa-edit"></i> Les chiffres sont modifiables directement dans le code (variables <strong>STATIC_CURRENT_MEMBERS</strong>, <strong>STATIC_MAX_MEMBERS</strong> et <strong>STATIC_RESET_DATE</strong> en haut du JavaScript).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 7 : À PROPOS
+        ========================================================== -->
+        <section id="page-about" class="page">
+            <div class="about-content">
+                <h3><i class="fas fa-eye"></i> ECHO_VAULT v4.2</h3>
+                <p>Plateforme d'archives et d'OSINT nouvelle génération. Design cyberpunk, modules intégrés, et visualisation avancée.</p>
+                <ul style="margin-top:20px;">
+                    <li><i class="fas fa-tag"></i> <strong>Catégorie</strong> : School FR (extensible)</li>
+                    <li><i class="fas fa-user-secret"></i> <strong>Ajout manuel</strong> : Modifiez <code>LEAK_DB</code> dans le code source.</li>
+                    <li><i class="fas fa-tools"></i> <strong>10 outils OSINT</strong> : IP, Hash, Base64, DNS, QR, Binaire, Scan de ports, Générateur MDP, etc.</li>
+                    <li><i class="fas fa-users"></i> <strong>Équipe</strong> : des membres avec leurs avatars (modifiables dans <code>TEAM_DB</code>).</li>
+                    <li><i class="fas fa-door-open"></i> <strong>Accès</strong> : Serveur privé non communautaire. Capacité limitée et reset périodique.</li>
+                    <li><i class="fas fa-shield-alt"></i> <strong>100% client</strong> : Aucune donnée envoyée (sauf APIs publiques volontaires).</li>
+                </ul>
+                <div style="margin-top:25px; border-top:1px solid rgba(0,229,255,0.1); padding-top:20px; color:#4a8a9a; font-size:0.8rem;">
+                    ⚡ ECHO_VAULT v4.2 "TEAM EDITION" · Conçu pour les opérateurs exigeants.
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            ⚡ ECHO_VAULT v4.2 // Équipe avec avatars.
+        </footer>
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT COMPLET
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // 0. CONFIGURATION STATIQUE (MODIFIE ICI)
+        // ============================================================
+        // 🔗 Remplace ce lien par ton invitation Discord
+        const DISCORD_INVITE_LINK = 'https://discord.gg/p5XnAyjvyA';
+
+        // 👥 STATISTIQUES DU SERVEUR (MODIFIE ICI)
+        const STATIC_CURRENT_MEMBERS = 19;
+        const STATIC_MAX_MEMBERS = 30;
+        const STATIC_RESET_DATE = new Date('2026-08-01T00:00:00');
+
+        // ============================================================
+        // 1. BASE DE DONNÉES (ARCHIVES)
+        // ============================================================
+        const LEAK_DB = [
+            { id: "001", title: "Leak School FR", category: "School FR", date: "2026-07-23",
+            status: "Vérifié", link: "https://mega.nz/file/w3cAwLQS#aET3RmCL81yaruiZXa-aShsYTDKEZn_J5_KnTf5rxCQ" },
+            //{ id: "002", title: "BASE_ELEVES_TERMINALE_2026.sql", category: "School FR", date: "2026-07-20",
+            //status: "Non vérifié", link: "#" },
+            //{ id: "002", title: "BASE_ELEVES_TERMINALE_2026.sql", category: "School FR", date: "2026-07-20",
+            //status: "Vérifié", link: "#" },
+        ];
+
+        // ============================================================
+        // 1.5 BASE DE L'ÉQUIPE (AVEC AVATARS)
+        // ============================================================
+        const TEAM_DB = [
+            { id: 1, name: "Exiozz", role: "Owner", avatar: "https://cdn.discordapp.com/attachments/1504247123154305271/1529621050684477491/B23458F0-0471-4F44-BEC6-FD59BCB0C085.gif?ex=6a629a1d&is=6a61489d&hm=267e48888b731901565b9fce4396fdba504fd1a5fc4760de980cf7ccce09f9b7&" },
+            { id: 2, name: "Nyrozz†", role: "Founder", avatar: "https://cdn.discordapp.com/attachments/1504247123154305271/1529621037589725395/telecharge_2.gif?ex=6a629a1a&is=6a61489a&hm=f65e6954fd705f67986b0178d7f43810efe92e0485ec0115c3e2d62212aee001&" },
+        ];
+
+        // Mapping des couleurs par rôle
+        const roleColors = {
+            'Owner': 'owner',
+            'Leaker': 'leaker',
+            'Contributor': 'contributor',
+            'Admin': 'admin',
+            'Moderator': 'moderator',
+            'Founder': 'founder'
+        };
+
+        // ============================================================
+        // 2. NAVIGATION
+        // ============================================================
+        const pages = {
+            'page-accueil': document.getElementById('page-accueil'),
+            'page-archives': document.getElementById('page-archives'),
+            'page-outils': document.getElementById('page-outils'),
+            'page-stats': document.getElementById('page-stats'),
+            'page-team': document.getElementById('page-team'),
+            'page-contact': document.getElementById('page-contact'),
+            'page-about': document.getElementById('page-about')
+        };
+        const navLinks = document.querySelectorAll('.navbar a[data-page]');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.dataset.page;
+                Object.values(pages).forEach(p => p.classList.remove('active'));
+                if (pages[pageId]) pages[pageId].classList.add('active');
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                window.location.hash = pageId;
+            });
+        });
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.replace('#', '') || 'page-accueil';
+            const link = document.querySelector(`.navbar a[data-page="${hash}"]`);
+            if (link) link.click();
+        });
+        if (window.location.hash) {
+            const hash = window.location.hash.replace('#', '');
+            const link = document.querySelector(`.navbar a[data-page="${hash}"]`);
+            if (link) link.click();
+        }
+
+        // ============================================================
+        // 3. RENDU TABLEAU + STATS + SURBRILLANCE
+        // ============================================================
+        let currentSort = { key: 'id', asc: true };
+        let currentFilteredData = [];
+
+
+        function renderTable(data, searchTerm = '') {
+    const tbody = document.getElementById('leakTableBody');
+    tbody.innerHTML = '';
+    if (data.length === 0) {
+        tbody.innerHTML =
+            `<tr><td colspan="6" style="text-align:center;color:#2a5a6a;">Aucune archive trouvée.</td></tr>`;
+        return;
+    }
+    data.forEach(item => {
+        const tr = document.createElement('tr');
+        const statusClass = item.status === 'Vérifié' ? 'status-verified' : 'status-unverified';
+        let titleDisplay = item.title;
+        if (searchTerm) {
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            titleDisplay = item.title.replace(regex, '<span class="highlight">$1</span>');
+        }
+        tr.innerHTML = `
+            <td><strong>#${item.id}</strong></td>
+            <td><i class="fas fa-file"></i> ${titleDisplay}</td>
+            <td><span class="tag">${item.category}</span></td>
+            <td>${item.date}</td>
+            <td><span class="${statusClass}">${item.status === 'Vérifié' ? '✅' : '❌'} ${item.status}</span></td>
+            <td><a href="${item.link}" target="_blank" class="btn-sm"><i class="fas fa-download"></i></a></td>
+        `;
+        tbody.appendChild(tr);
+    });
+    updateStats(data);
+    updateCharts(data);
+}
+
+        function updateStats(data) {
+            document.getElementById('totalLeaks').textContent = data.length;
+            const categories = new Set(data.map(d => d.category));
+            document.getElementById('totalCategories').textContent = categories.size;
+            document.getElementById('verifiedCount').textContent = data.filter(d => d.status === 'Vérifié').length;
+        }
+
+        // ============================================================
+        // 4. RENDU ÉQUIPE (AVEC AVATARS)
+        // ============================================================
+        function renderTeam() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = '';
+            document.getElementById('teamCount').textContent = TEAM_DB.length;
+
+            TEAM_DB.forEach(member => {
+                const roleClass = roleColors[member.role] || 'contributor';
+
+                const card = document.createElement('div');
+                card.className = 'team-card';
+                card.innerHTML = `
+                    <div class="avatar">
+                        <img src="${member.avatar}" alt="${member.name}" loading="lazy" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0a120d&color=00e5ff&size=80'">
+                    </div>
+                    <div class="name">${member.name}</div>
+                    <div class="role ${roleClass}">${member.role}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // 5. CONTACT / ACCÈS (STATIC)
+        // ============================================================
+        function updateContactStats() {
+            document.getElementById('discordLink').href = DISCORD_INVITE_LINK;
+
+            document.getElementById('currentMembers').textContent = STATIC_CURRENT_MEMBERS;
+            document.getElementById('maxMembers').textContent = STATIC_MAX_MEMBERS;
+
+            const available = STATIC_MAX_MEMBERS - STATIC_CURRENT_MEMBERS;
+            const spotEl = document.getElementById('availableSpots');
+            spotEl.textContent = available;
+            if (available <= 2) {
+                spotEl.className = 'value danger';
+            } else if (available <= 5) {
+                spotEl.className = 'value warning';
+            } else {
+                spotEl.className = 'value';
+            }
+
+            const now = new Date();
+            const diff = STATIC_RESET_DATE - now;
+
+            if (diff <= 0) {
+                document.getElementById('resetCountdown').textContent = '🔴 RESET EN COURS';
+                document.getElementById('resetCountdown').style.color = '#ff3b3b';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const countdownStr =
+                `${String(days).padStart(2, '0')}j ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+            document.getElementById('resetCountdown').textContent = countdownStr;
+            document.getElementById('resetCountdown').style.color = '#ffaa00';
+        }
+
+        setInterval(updateContactStats, 1000);
+
+        // ============================================================
+        // 6. TRI & FILTRES
+        // ============================================================
+        function filterAndSort() {
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            let filtered = LEAK_DB.filter(item => {
+                const matchSearch = item.title.toLowerCase().includes(search) || item.id.includes(search);
+                const matchCategory = category === 'all' || item.category === category;
+                const matchStatus = status === 'all' || item.status === status;
+                return matchSearch && matchCategory && matchStatus;
+            });
+
+            filtered.sort((a, b) => {
+                let valA = a[currentSort.key];
+                let valB = b[currentSort.key];
+                if (currentSort.key === 'id') { valA = parseInt(valA);
+                    valB = parseInt(valB); }
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return currentSort.asc ? -1 : 1;
+                if (valA > valB) return currentSort.asc ? 1 : -1;
+                return 0;
+            });
+
+            currentFilteredData = filtered;
+            renderTable(filtered, search);
+        }
+
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', function() {
+                const key = this.dataset.sort;
+                if (currentSort.key === key) {
+                    currentSort.asc = !currentSort.asc;
+                } else {
+                    currentSort.key = key;
+                    currentSort.asc = true;
+                }
+                filterAndSort();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', filterAndSort);
+        document.getElementById('categoryFilter').addEventListener('change', filterAndSort);
+        document.getElementById('statusFilter').addEventListener('change', filterAndSort);
+
+        // ============================================================
+        // 7. POPULATE CATEGORY FILTER
+        // ============================================================
+        function populateCategoryFilter() {
+            const select = document.getElementById('categoryFilter');
+            const categories = [...new Set(LEAK_DB.map(item => item.category))];
+            const allOption = select.querySelector('option[value="all"]');
+            select.innerHTML = '';
+            select.appendChild(allOption);
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = `🏫 ${cat}`;
+                select.appendChild(option);
+            });
+        }
+        populateCategoryFilter();
+
+        // ============================================================
+        // 8. GRAPHIQUES STATS
+        // ============================================================
+        function updateCharts(data) {
+            const container = document.getElementById('statsChartsContainer');
+            const cats = {};
+            const statuses = { 'Vérifié': 0, 'Non vérifié': 0 };
+            data.forEach(item => {
+                cats[item.category] = (cats[item.category] || 0) + 1;
+                statuses[item.status] = (statuses[item.status] || 0) + 1;
+            });
+
+            let html = `
+                <div class="chart-box">
+                    <h4>📊 Répartition par Catégorie</h4>
+                    ${Object.entries(cats).map(([cat, count]) => `
+                        <div class="bar-item">
+                            <span class="label">${cat}</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:${(count/data.length)*100}%;"></div></div>
+                            <span class="value">${count}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="chart-box">
+                    <h4>🔐 Statut des Archives</h4>
+                    ${Object.entries(statuses).map(([status, count]) => `
+                        <div class="bar-item">
+                            <span class="label">${status}</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:${(count/data.length)*100}%; background: ${status === 'Vérifié' ? '#00ff41' : '#ff3b3b'};"></div></div>
+                            <span class="value">${count}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="chart-box">
+                    <h4>📈 Vue d'ensemble</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;text-align:center;margin-top:10px;">
+                        <div style="background:rgba(0,229,255,0.03);padding:20px;border-radius:10px;border:1px solid rgba(0,229,255,0.05);">
+                            <div style="font-size:2rem;color:#00e5ff;">${data.length}</div>
+                            <div style="font-size:0.7rem;color:#4a8a9a;">Total</div>
+                        </div>
+                        <div style="background:rgba(255,0,184,0.03);padding:20px;border-radius:10px;border:1px solid rgba(255,0,184,0.05);">
+                            <div style="font-size:2rem;color:#ff00b8;">${Object.keys(cats).length}</div>
+                            <div style="font-size:0.7rem;color:#4a8a9a;">Catégories</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // 9. ACTIVITY FEED
+        // ============================================================
+        function addFeedItem(msg, icon = 'fa-circle') {
+            const feed = document.getElementById('activityFeed');
+            const time = new Date().toLocaleTimeString();
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            item.innerHTML = `<span class="time">[${time}]</span><span class="msg"><i class="fas ${icon}"></i> ${msg}</span>`;
+            feed.appendChild(item);
+            feed.scrollTop = feed.scrollHeight;
+            if (feed.children.length > 20) {
+                feed.removeChild(feed.children[0]);
+            }
+        }
+
+        setInterval(() => {
+            const actions = [
+                'Requête OSINT envoyée vers le serveur.',
+                'Analyse du trafic réseau en cours...',
+                'Mise à jour des signatures de sécurité.',
+                'Scan du périmètre terminé.',
+                'Nouvelle archive indexée dans la base.',
+                'Vérification des intégrités...'
+            ];
+            const msg = actions[Math.floor(Math.random() * actions.length)];
+            addFeedItem(msg, 'fa-sync-alt');
+        }, 4500);
+
+        // ============================================================
+        // 10. OSINT TOOLS (10 Modules)
+        // ============================================================
+
+        function lookupIP() {
+            const ip = document.getElementById('ipInput').value.trim();
+            const output = document.getElementById('ipOutput');
+            if (!ip) { output.textContent = '⚠️ Entrez une IP.'; return; }
+            output.textContent = '🔍 Requête...';
+            fetch(`https://ip-api.com/json/${ip}?fields=status,message,country,city,isp,org,as,query`)
+                .then(res => res.json()).then(data => {
+                    if (data.status === 'success') {
+                        output.innerHTML =
+                            `🌍 IP: ${data.query}<br>🏙️ Ville: ${data.city}<br>🇨🇳 Pays: ${data.country}<br>📡 ISP: ${data.isp}<br>🏢 Org: ${data.org}<br>🔢 AS: ${data.as}`;
+                    } else { output.textContent = `❌ Erreur : ${data.message || 'IP invalide'}`; }
+                }).catch(() => output.textContent = '❌ Erreur réseau.');
+        }
+
+        async function generateHash() {
+            const input = document.getElementById('hashInput').value;
+            const output = document.getElementById('hashOutput');
+            if (!input) { output.textContent = '⚠️ Entrez du texte.'; return; }
+            try {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(input);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                output.textContent = `SHA-256: ${hashHex}`;
+            } catch (e) { output.textContent = '❌ Erreur de hashage.'; }
+        }
+
+        function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            const output = document.getElementById('textOutput');
+            if (!text) { output.textContent = '⚠️ Collez du texte.'; return; }
+            const words = text.split(/\s+/).filter(w => w.length > 0).length;
+            const chars = text.length;
+            const lines = text.split('\n').length;
+            const freq = {};
+            for (let c of text) { freq[c] = (freq[c] || 0) + 1; }
+            let entropy = 0;
+            for (let c in freq) { const p = freq[c] / chars;
+                entropy -= p * Math.log2(p); }
+            output.innerHTML =
+                `📝 Mots: ${words}<br>🔤 Caractères: ${chars}<br>📃 Lignes: ${lines}<br>🔀 Entropie: ${entropy.toFixed(3)} bits`;
+        }
+
+        function checkPass() {
+            const pass = document.getElementById('passInput').value;
+            const output = document.getElementById('passOutput');
+            if (!pass) { output.textContent = '⚠️ Entrez un mot de passe.'; return; }
+            let score = 0;
+            if (pass.length >= 8) score++;
+            if (pass.length >= 12) score++;
+            if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
+            if (/\d/.test(pass)) score++;
+            if (/[^a-zA-Z0-9]/.test(pass)) score++;
+            let strength = 'Très faible',
+                color = '#ff3b3b';
+            if (score >= 5) { strength = 'Excellent';
+                color = '#00ff41'; } else if (score >= 4) { strength = 'Fort';
+                color = '#66ff99'; } else if (score >= 3) { strength = 'Moyen';
+                color = '#ffaa00'; } else if (score >= 2) { strength = 'Faible';
+                color = '#ff6b3b'; }
+            output.innerHTML = `🔐 Score: ${score}/5 - <span style="color:${color}">${strength}</span> (Longueur: ${pass.length})`;
+        }
+
+        function encodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            const output = document.getElementById('base64Output');
+            if (!input) { output.textContent = '⚠️ Entrez du texte.'; return; }
+            try { output.textContent = btoa(input); } catch (e) { output.textContent = '❌ Erreur (caractères non latins ?)'; }
+        }
+
+        function decodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            const output = document.getElementById('base64Output');
+            if (!input) { output.textContent = '⚠️ Entrez du Base64.'; return; }
+            try { output.textContent = atob(input); } catch (e) { output.textContent = '❌ Base64 invalide.'; }
+        }
+
+        function dnsLookup() {
+            const domain = document.getElementById('dnsInput').value.trim();
+            const output = document.getElementById('dnsOutput');
+            if (!domain) { output.textContent = '⚠️ Entrez un domaine.'; return; }
+            output.textContent = '🔍 Résolution...';
+            fetch(`https://dns.google/resolve?name=${domain}&type=A`)
+                .then(res => res.json()).then(data => {
+                    if (data.Answer) {
+                        const ips = data.Answer.map(a => a.data).join('<br>');
+                        output.innerHTML = `🌐 ${domain} résolu en :<br>${ips}`;
+                    } else { output.textContent = `❌ Aucun enregistrement A pour ${domain}`; }
+                }).catch(() => output.textContent = '❌ Erreur réseau.');
+        }
+
+        function generateQR() {
+            const text = document.getElementById('qrInput').value.trim();
+            const output = document.getElementById('qrOutput');
+            if (!text) { output.textContent = '⚠️ Entrez du texte.'; return; }
+            const encoded = encodeURIComponent(text);
+            output.innerHTML =
+                `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encoded}" alt="QR Code" class="qr"><br><span style="font-size:0.7rem;">${text}</span>`;
+        }
+
+        function textToBinary() {
+            const input = document.getElementById('binaryInput').value;
+            const output = document.getElementById('binaryOutput');
+            if (!input) { output.textContent = '⚠️ Entrez du texte.'; return; }
+            const binary = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+            output.textContent = binary || ' ';
+        }
+
+        function binaryToText() {
+            const input = document.getElementById('binaryInput').value;
+            const output = document.getElementById('binaryOutput');
+            if (!input) { output.textContent = '⚠️ Entrez du binaire (ex: 01000001).'; return; }
+            try {
+                const bytes = input.split(' ').filter(b => b.length === 8);
+                const text = bytes.map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                output.textContent = text || ' ';
+            } catch (e) { output.textContent = '❌ Binaire invalide (utilisez des groupes de 8 bits).'; }
+        }
+
+        function scanPorts() {
+            const target = document.getElementById('portInput').value.trim();
+            const output = document.getElementById('portOutput');
+            const progress = document.getElementById('portProgress');
+            if (!target) { output.textContent = '⚠️ Entrez une cible.'; return; }
+            const commonPorts = [
+                { port: 21, name: 'FTP' }, { port: 22, name: 'SSH' }, { port: 23, name: 'Telnet' },
+                { port: 25, name: 'SMTP' }, { port: 53, name: 'DNS' }, { port: 80, name: 'HTTP' },
+                { port: 110, name: 'POP3' }, { port: 143, name: 'IMAP' }, { port: 443, name: 'HTTPS' },
+                { port: 993, name: 'IMAPS' }, { port: 995, name: 'POP3S' }, { port: 3306, name: 'MySQL' },
+                { port: 3389, name: 'RDP' }, { port: 5432, name: 'PostgreSQL' }, { port: 8080, name: 'HTTP-Alt' }
+            ];
+            output.innerHTML = `🔍 Scan de ${target} en cours...<br>`;
+            progress.style.width = '0%';
+            let completed = 0;
+            let results = [];
+            commonPorts.forEach((p, index) => {
+                setTimeout(() => {
+                    const isOpen = (p.port === 22 || p.port === 80 || p.port === 443 || p.port === 8080) && Math
+                        .random() > 0.2;
+                    const status = isOpen ? '🟢 OUVERT' : '🔴 FERMÉ';
+                    const color = isOpen ? '#00ff41' : '#ff3b3b';
+                    results.push(
+                        `<span style="color:${color};">${p.port} (${p.name}) : ${status}</span>`);
+                    completed++;
+                    progress.style.width = `${(completed / commonPorts.length) * 100}%`;
+                    if (completed === commonPorts.length) {
+                        output.innerHTML = `📡 Résultats pour ${target} :<br>${results.join('<br>')}`;
+                        setTimeout(() => { progress.style.width = '0%'; }, 1500);
+                    }
+                }, 100 + index * 120);
+            });
+        }
+
+        let lastGeneratedPassword = '';
+
+        function generatePassword() {
+            const len = parseInt(document.getElementById('passLen').value) || 16;
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+            let pwd = '';
+            for (let i = 0; i < len; i++) {
+                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            lastGeneratedPassword = pwd;
+            document.getElementById('passGenOutput').innerHTML =
+                `<span style="color:#00e5ff;font-weight:bold;font-size:1.1rem;">${pwd}</span>`;
+        }
+
+        function copyPassword() {
+            if (!lastGeneratedPassword) { alert('Générez d\'abord un mot de passe.'); return; }
+            navigator.clipboard.writeText(lastGeneratedPassword).then(() => {
+                alert('✅ Mot de passe copié dans le presse-papiers !');
+            }).catch(() => {
+                alert('❌ Impossible de copier, sélectionnez-le manuellement.');
+            });
+        }
+
+        // ============================================================
+        // 11. LOADING SCREEN HIDE
+        // ============================================================
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                addFeedItem('Système opérationnel. Bienvenue, opérateur.', 'fa-check-circle');
+                updateContactStats();
+            }, 1500);
+        });
+
+        // ============================================================
+        // 12. INIT
+        // ============================================================
+        renderTeam();
+        filterAndSort();
+        console.log('%c👁️ ECHO_VAULT v4.2 "TEAM EDITION" LOADED', 'color: #00e5ff; font-size: 16px; font-weight: bold;');
+        console.log('%c🔧 Modifiez LEAK_DB, TEAM_DB et les variables STATIC_* pour gérer vos données.', 'color: #4a8a9a;');
+    </script>
+</body>
+</html>
