@@ -1355,13 +1355,13 @@
             titleDisplay = item.title.replace(regex, '<span class="highlight">$1</span>');
         }
         tr.innerHTML = `
-            <td><strong>#${item.id}</strong></td>
-            <td><i class="fas fa-file"></i> ${titleDisplay}</td>
-            <td><span class="tag">${item.category}</span></td>
-            <td>${item.date}</td>
-            <td><span class="${statusClass}">${item.status === 'Vérifié' ? '✅' : '❌'} ${item.status}</span></td>
-            <td><a href="${item.link}" target="_blank" class="btn-sm"><i class="fas fa-download"></i></a></td>
-        `;
+    <td><strong>#${item.id}</strong></td>
+    <td><i class="fas fa-file"></i> ${titleDisplay}</td>
+    <td><span class="tag">${item.category}</span></td>
+    <td>${item.date}</td>
+    <td><span class="${statusClass}">${item.status === 'Vérifié' ? '✅' : '❌'} ${item.status}</span></td>
+    <td><a href="${item.link}" download target="_blank" class="btn-sm"><i class="fas fa-download"></i></a></td>
+`;
         tbody.appendChild(tr);
     });
     updateStats(data);
