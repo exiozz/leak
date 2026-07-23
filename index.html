@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>⬡ ECHO VAULT ::</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         /* ============================================================
            RESET & FONTS
@@ -25,38 +25,17 @@
         }
 
         /* ============================================================
-           BACKGROUND CYBER GRID (ANIMÉ)
+           CANVAS BACKGROUND (PARTICLES NETWORK)
            ============================================================ */
-        .cyber-grid {
+        #particlesCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
-            background-image:
-                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
             pointer-events: none;
-        }
-        @keyframes gridMove {
-            0% {
-                transform: perspective(600px) rotateX(5deg) translateY(0);
-            }
-            100% {
-                transform: perspective(600px) rotateX(5deg) translateY(60px);
-            }
-        }
-        .cyber-grid::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, transparent 30%, rgba(5, 10, 8, 0.8) 100%);
+            opacity: 0.6;
         }
 
         /* ============================================================
@@ -119,6 +98,9 @@
         #loader .boot-log .line:nth-child(5) {
             animation-delay: 1.3s;
         }
+        #loader .boot-log .line:nth-child(6) {
+            animation-delay: 1.6s;
+        }
         @keyframes bootFade {
             0% {
                 opacity: 0;
@@ -155,9 +137,9 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
-            background: rgba(8, 14, 10, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(8, 14, 10, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(0, 229, 255, 0.15);
             border-radius: 16px;
             padding: 20px;
@@ -176,8 +158,8 @@
             pointer-events: none;
             z-index: 9998;
             background: repeating-linear-gradient(0deg,
-                    rgba(0, 0, 0, 0.08) 0px,
-                    rgba(0, 0, 0, 0.08) 2px,
+                    rgba(0, 0, 0, 0.06) 0px,
+                    rgba(0, 0, 0, 0.06) 2px,
                     transparent 2px,
                     transparent 6px);
         }
@@ -190,6 +172,31 @@
             height: 100%;
             background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.7) 100%);
             pointer-events: none;
+        }
+
+        /* ============================================================
+           GLITCH TITLE
+           ============================================================ */
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%,
+            100% {
+                text-shadow: 0 0 40px #00e5ff, 0 0 80px rgba(0, 229, 255, 0.2);
+            }
+            20% {
+                text-shadow: -3px 0 #ff00b8, 3px 0 #00e5ff, 0 0 40px #00e5ff;
+            }
+            40% {
+                text-shadow: 2px -2px #ff00b8, -2px 2px #00e5ff;
+            }
+            60% {
+                text-shadow: 0 0 40px #00e5ff, 0 0 80px rgba(0, 229, 255, 0.2);
+            }
+            80% {
+                text-shadow: 4px 0 #ff00b8, -4px 0 #00e5ff;
+            }
         }
 
         /* ============================================================
@@ -218,6 +225,20 @@
         .navbar .brand i {
             color: #ff00b8;
             text-shadow: 0 0 40px #ff00b8;
+        }
+        .navbar .clock {
+            font-size: 0.8rem;
+            color: #4a8a9a;
+            letter-spacing: 2px;
+            background: rgba(0, 229, 255, 0.05);
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            font-variant-numeric: tabular-nums;
+        }
+        .navbar .clock i {
+            color: #00e5ff;
+            margin-right: 8px;
         }
         .navbar a {
             color: #66ccdd;
@@ -254,6 +275,26 @@
             background: rgba(0, 229, 255, 0.08);
             border-color: rgba(0, 229, 255, 0.2);
             box-shadow: 0 0 30px rgba(0, 229, 255, 0.05);
+        }
+        .navbar .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff41;
+            margin-right: 6px;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(0.7);
+            }
         }
 
         /* ============================================================
@@ -330,6 +371,11 @@
             letter-spacing: 2px;
             margin-top: 5px;
             display: block;
+        }
+        .stat-card .sub {
+            font-size: 0.6rem;
+            color: #2a5a6a;
+            margin-top: 2px;
         }
 
         /* ============================================================
@@ -455,6 +501,65 @@
             padding: 0 4px;
             border-radius: 3px;
             color: #ff00b8;
+        }
+
+        /* ============================================================
+           LATEST LEAK BANNER
+           ============================================================ */
+        .latest-leak {
+            background: rgba(255, 0, 184, 0.04);
+            border: 1px solid rgba(255, 0, 184, 0.15);
+            border-radius: 12px;
+            padding: 15px 22px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+        .latest-leak .badge {
+            background: #ff00b8;
+            color: #050a08;
+            font-weight: bold;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: pulse-badge 2s infinite;
+        }
+        @keyframes pulse-badge {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 0, 184, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 0, 184, 0.4);
+            }
+        }
+        .latest-leak .info {
+            flex: 1;
+            color: #c0d6d6;
+        }
+        .latest-leak .info strong {
+            color: #00e5ff;
+        }
+        .latest-leak .info .date {
+            color: #4a8a9a;
+            font-size: 0.75rem;
+        }
+        .latest-leak .action a {
+            color: #00e5ff;
+            text-decoration: none;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .latest-leak .action a:hover {
+            background: #00e5ff;
+            color: #050a08;
         }
 
         /* ============================================================
@@ -683,6 +788,16 @@
             color: #ff6b6b;
             border-color: #ff6b6b;
             background: rgba(255, 107, 107, 0.08);
+        }
+        .team-card .role.archivist {
+            color: #66ddff;
+            border-color: #66ddff;
+            background: rgba(102, 221, 255, 0.08);
+        }
+        .team-card .role.security {
+            color: #ff8844;
+            border-color: #ff8844;
+            background: rgba(255, 136, 68, 0.08);
         }
 
         /* ============================================================
@@ -914,6 +1029,93 @@
         }
 
         /* ============================================================
+           ASSISTANCE (FAQ + CONTACT)
+           ============================================================ */
+        .assistance-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        .assistance-container .faq-box,
+        .assistance-container .contact-box {
+            background: rgba(10, 18, 13, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            padding: 25px;
+            border-radius: 14px;
+        }
+        .assistance-container h3 {
+            color: #66ddff;
+            font-weight: normal;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+        }
+        .assistance-container h3 i {
+            color: #ff00b8;
+        }
+        .faq-item {
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+            padding-bottom: 12px;
+        }
+        .faq-item .q {
+            color: #00e5ff;
+            font-weight: bold;
+            display: flex;
+            gap: 10px;
+        }
+        .faq-item .q i {
+            color: #ffaa00;
+        }
+        .faq-item .a {
+            color: #7ababa;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            padding-left: 28px;
+        }
+        .contact-box input,
+        .contact-box textarea {
+            width: 100%;
+            background: rgba(5, 10, 7, 0.8);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            color: #c0d6d6;
+            padding: 10px 14px;
+            font-family: inherit;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .contact-box input:focus,
+        .contact-box textarea:focus {
+            border-color: #00e5ff;
+            outline: none;
+        }
+        .contact-box button {
+            background: transparent;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: #00e5ff;
+            padding: 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .contact-box button:hover {
+            background: #00e5ff;
+            color: #050a08;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+        }
+        .contact-box .form-note {
+            font-size: 0.7rem;
+            color: #4a8a9a;
+            margin-top: 8px;
+        }
+
+        /* ============================================================
            FOOTER
            ============================================================ */
         .footer {
@@ -935,6 +1137,11 @@
                 width: 100%;
                 margin-bottom: 8px;
             }
+            .navbar .clock {
+                font-size: 0.65rem;
+                padding: 4px 12px;
+                margin-left: auto;
+            }
             .stats-row {
                 grid-template-columns: 1fr 1fr;
             }
@@ -950,10 +1157,18 @@
             .contact-container {
                 grid-template-columns: 1fr;
             }
+            .assistance-container {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 450px) {
             .team-grid {
                 grid-template-columns: 1fr;
+            }
+            .latest-leak {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
             }
         }
     </style>
@@ -970,15 +1185,20 @@
             <div class="line">> LOADING OSINT MODULES... [OK]</div>
             <div class="line">> DECRYPTING LOCAL DATABASE... [OK]</div>
             <div class="line">> ESTABLISHING SECURE CHANNEL... [OK]</div>
+            <div class="line">> PARTICLE NETWORK ACTIVE... [OK]</div>
             <div class="line">> SYSTEM READY. WELCOME, OPERATOR.</div>
         </div>
         <div class="loader-spinner"></div>
     </div>
 
     <!-- ============================================================
+    CANVAS PARTICLES (BACKGROUND)
+    ============================================================ -->
+    <canvas id="particlesCanvas"></canvas>
+
+    <!-- ============================================================
     EFFETS
     ============================================================ -->
-    <div class="cyber-grid"></div>
     <div class="crt"></div>
 
     <!-- ============================================================
@@ -988,7 +1208,8 @@
 
         <!-- NAVIGATION -->
         <nav class="navbar">
-            <div class="brand"><i class="fas fa-eye"></i> ECHO_VAULT</div>
+            <div class="brand"><i class="fas fa-eye"></i> <span class="glitch-text">ECHO_VAULT</span></div>
+            <div class="clock"><i class="fas fa-clock"></i> <span id="liveClock">--:--:--</span></div>
             <a href="#page-accueil" class="active" data-page="page-accueil"><i class="fas fa-home"></i> Accueil</a>
             <a href="#page-archives" data-page="page-archives"><i class="fas fa-database"></i> Archives</a>
             <a href="#page-outils" data-page="page-outils"><i class="fas fa-microchip"></i> Outils</a>
@@ -996,6 +1217,10 @@
             <a href="#page-team" data-page="page-team"><i class="fas fa-users"></i> Équipe</a>
             <a href="#page-contact" data-page="page-contact"><i class="fas fa-door-open"></i> Accès</a>
             <a href="#page-about" data-page="page-about"><i class="fas fa-info-circle"></i> À propos</a>
+            <a href="#page-assistance" data-page="page-assistance"><i class="fas fa-life-ring"></i> Assistance</a>
+            <span style="margin-left:auto; display:flex; align-items:center; gap:6px; font-size:0.7rem; color:#2a5a6a;">
+                <span class="status-dot"></span> SYSTÈME
+            </span>
         </nav>
 
         <!-- ==========================================================
@@ -1007,17 +1232,29 @@
                 <p style="color:#4a8a9a;">Console centrale · Surveillance des archives et des flux OSINT.</p>
             </div>
 
+            <!-- Latest Leak Banner -->
+            <div class="latest-leak">
+                <span class="badge"><i class="fas fa-bolt"></i> NOUVEAU</span>
+                <div class="info">
+                    <strong>Leak School FR</strong> — <span class="date">publié le 2026-07-23</span>
+                </div>
+                <div class="action">
+                    <a href="#page-archives" onclick="document.querySelector('[data-page=\'page-archives\']').click();"><i class="fas fa-arrow-right"></i> Voir</a>
+                </div>
+            </div>
+
             <div class="stats-row" id="statsRow">
                 <div class="stat-card"><div class="num" id="totalLeaks">0</div><span class="label">Total archives</span></div>
                 <div class="stat-card"><div class="num" id="totalCategories">0</div><span class="label">Catégories</span></div>
                 <div class="stat-card"><div class="num" id="verifiedCount">0</div><span class="label">Vérifiées</span></div>
-                <div class="stat-card"><div class="num">10</div><span class="label">Outils OSINT</span></div>
+                <div class="stat-card"><div class="num" id="toolCount">10</div><span class="label">Outils OSINT</span></div>
             </div>
 
             <div style="margin-top:10px;">
                 <h4 style="color:#4a8a9a; font-weight:normal; letter-spacing:2px; margin-bottom:10px;"><i class="fas fa-bolt" style="color:#ff00b8;"></i> FLUX D'ACTIVITÉ</h4>
                 <div class="feed-container" id="activityFeed">
-                    <div class="feed-item"><span class="time">[SYSTEM]</span><span class="msg"><i class="fas fa-check-circle"></i> ECHO_VAULT v4.2 opérationnel.</span></div>
+                    <div class="feed-item"><span class="time">[SYSTEM]</span><span class="msg"><i class="fas fa-check-circle"></i> ECHO_VAULT v4.3 opérationnel.</span></div>
+                    <div class="feed-item"><span class="time">[SYSTEM]</span><span class="msg"><i class="fas fa-network-wired"></i> Réseau de particules actif.</span></div>
                 </div>
             </div>
         </section>
@@ -1164,7 +1401,7 @@
         </section>
 
         <!-- ==========================================================
-        PAGE 5 : ÉQUIPE (AVEC AVATARS)
+        PAGE 5 : ÉQUIPE
         ========================================================== -->
         <section id="page-team" class="page">
             <div style="margin-bottom: 20px;">
@@ -1177,7 +1414,7 @@
         </section>
 
         <!-- ==========================================================
-        PAGE 6 : CONTACT / ACCÈS (STATIC)
+        PAGE 6 : CONTACT / ACCÈS
         ========================================================== -->
         <section id="page-contact" class="page">
             <div style="margin-bottom: 20px;">
@@ -1186,7 +1423,6 @@
             </div>
 
             <div class="contact-container">
-                <!-- Carte Discord -->
                 <div class="contact-card">
                     <h3><i class="fab fa-discord"></i> Rejoindre le Discord</h3>
                     <span class="badge-restricted"><i class="fas fa-lock"></i> Privé · Sur invitation [RESTREINT]</span>
@@ -1201,7 +1437,6 @@
                     </p>
                 </div>
 
-                <!-- Carte Capacité & Reset -->
                 <div class="contact-card">
                     <h3><i class="fas fa-users-slash"></i> Capacité &amp; Politique</h3>
                     <div class="contact-stats">
@@ -1219,7 +1454,7 @@
                         </div>
                     </div>
                     <div class="notice-reset">
-                        <i class="fas fa-edit"></i> Les données ne peuvent pas etre à jour au moment où vous consulté.
+                        <i class="fas fa-edit"></i> Les données ne peuvent pas être à jour au moment où vous consultez.
                     </div>
                 </div>
             </div>
@@ -1230,24 +1465,71 @@
         ========================================================== -->
         <section id="page-about" class="page">
             <div class="about-content">
-                <h3><i class="fas fa-eye"></i> ECHO_VAULT v4.2</h3>
+                <h3><i class="fas fa-eye"></i> ECHO_VAULT v4.3</h3>
                 <p>Plateforme d'archives et d'OSINT nouvelle génération. Design cyberpunk, modules intégrés, et visualisation avancée.</p>
                 <ul style="margin-top:20px;">
                     <li><i class="fas fa-tag"></i> <strong>Catégorie</strong> : School FR, other soon</li>
-                    <li><i class="fas fa-user-secret"></i> <strong>Ajout manuel</strong> : Par zo7q (mp si nécessaire)</li>
+                    <li><i class="fas fa-user-secret"></i> <strong>Ajout manuel</strong> : Par zo7q</li>
                     <li><i class="fas fa-tools"></i> <strong>10 outils OSINT</strong> : IP, Hash, Base64, DNS, QR, Binaire, Scan de ports, Générateur MDP, etc.</li>
-                    <li><i class="fas fa-users"></i> <strong>Équipe</strong> : Exiozz, Nyrozz†</li>
+                    <li><i class="fas fa-users"></i> <strong>Équipe</strong> : Exiozz, Nyrozz†, K4rl, Z3r0</li>
                     <li><i class="fas fa-door-open"></i> <strong>Accès</strong> : Serveur privé non communautaire. Capacité limitée et reset périodique.</li>
                     <li><i class="fas fa-shield-alt"></i> <strong>100% client</strong> : Aucune donnée envoyée (sauf APIs publiques volontaires).</li>
+                    <li><i class="fas fa-circle"></i> <strong>Fond d'écran</strong> : Réseau de particules interactif.</li>
                 </ul>
                 <div style="margin-top:25px; border-top:1px solid rgba(0,229,255,0.1); padding-top:20px; color:#4a8a9a; font-size:0.8rem;">
-                    ⚡ ECHO_VAULT v4.2 · Conçu pour les opérateurs exigeants.
+                    ⚡ ECHO_VAULT v4.3 · Conçu pour les opérateurs exigeants.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        PAGE 8 : ASSISTANCE
+        ========================================================== -->
+        <section id="page-assistance" class="page">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color:#00e5ff; font-weight:normal; letter-spacing:2px;"><i class="fas fa-life-ring"></i> Assistance & Support</h2>
+                <p style="color:#4a8a9a;">Trouvez des réponses à vos questions ou contactez-nous.</p>
+            </div>
+            <div class="assistance-container">
+                <div class="faq-box">
+                    <h3><i class="fas fa-question-circle"></i> Questions fréquentes</h3>
+                    <div class="faq-item">
+                        <div class="q"><i class="fas fa-caret-right"></i> Comment ajouter une archive ?</div>
+                        <div class="a">Les archives sont ajoutées manuellement par les administrateurs. Contactez un membre de l'équipe pour proposer un ajout.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="q"><i class="fas fa-caret-right"></i> Que signifie "Vérifié" ?</div>
+                        <div class="a">Une archive vérifiée a été contrôlée et authentifiée par l'équipe. Elle est considérée comme fiable.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="q"><i class="fas fa-caret-right"></i> Comment obtenir un accès au Discord ?</div>
+                        <div class="a">L'accès est sur invitation. Contactez zo7q sur Discord ou un administrateur pour une invitation.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="q"><i class="fas fa-caret-right"></i> Les outils OSINT sont-ils anonymes ?</div>
+                        <div class="a">Oui, toutes les requêtes sont effectuées depuis votre navigateur. Aucune donnée n'est stockée sur nos serveurs.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="q"><i class="fas fa-caret-right"></i> Que signifie l'effet de fond ?</div>
+                        <div class="a">C'est un réseau de particules interactif qui réagit au mouvement de votre souris, symbolisant les connexions de données.</div>
+                    </div>
+                </div>
+                <div class="contact-box">
+                    <h3><i class="fas fa-envelope"></i> Contacter l'équipe</h3>
+                    <form id="assistanceForm" onsubmit="return sendAssistanceMail(event)">
+                        <input type="text" placeholder="Votre pseudo" id="contactPseudo" required>
+                        <input type="email" placeholder="Votre email (facultatif)" id="contactEmail">
+                        <textarea rows="4" placeholder="Décrivez votre demande..." id="contactMessage" required></textarea>
+                        <button type="submit"><i class="fas fa-paper-plane"></i> Envoyer</button>
+                        <div class="form-note">* Votre message sera envoyé par email à l'équipe. Vous recevrez une réponse sous 48h.</div>
+                    </form>
                 </div>
             </div>
         </section>
 
         <footer class="footer">
-            ⚡ ECHO_VAULT v4.2 // © 2026. Tous droits réservés. <span style="color:#ffaa00;">[PRIVÉ]</span>
+            ⚡ ECHO_VAULT v4.3 // © 2026. Tous droits réservés. <span style="color:#ffaa00;">[PRIVÉ]</span>
+            &nbsp;—&nbsp; <a href="#page-assistance" style="color:#4a8a9a; text-decoration:none;" onclick="document.querySelector('[data-page=\'page-assistance\']').click();"><i class="fas fa-life-ring"></i> Assistance</a>
         </footer>
     </div>
 
@@ -1256,48 +1538,193 @@
     ============================================================ -->
     <script>
         // ============================================================
-        // 0. CONFIGURATION STATIQUE (MODIFIE ICI)
+        // 0. CONFIGURATION STATIQUE
         // ============================================================
-        // 🔗 Remplace ce lien par ton invitation Discord
         const DISCORD_INVITE_LINK = 'https://discord.gg/nZXf5UjMCg';
-
-        // 👥 STATISTIQUES DU SERVEUR (MODIFIE ICI)
-        const STATIC_CURRENT_MEMBERS = 19;
-        const STATIC_MAX_MEMBERS = 30;
+        const STATIC_CURRENT_MEMBERS = 17;
+        const STATIC_MAX_MEMBERS = 20;
         const STATIC_RESET_DATE = new Date('2026-08-01T00:00:00');
 
         // ============================================================
-        // 1. BASE DE DONNÉES (ARCHIVES)
+        // 1. PARTICLE NETWORK BACKGROUND
+        // ============================================================
+        (function initParticles() {
+            const canvas = document.getElementById('particlesCanvas');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            let particles = [];
+            const MAX_PARTICLES = 100;
+            const CONNECTION_DIST = 150;
+            let mouse = { x: null, y: null };
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = (Math.random() - 0.5) * 0.4;
+                    this.radius = Math.random() * 2 + 1.5;
+                    this.opacity = Math.random() * 0.6 + 0.2;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > w) { this.vx *= -1;
+                        this.x = Math.max(0, Math.min(w, this.x)); }
+                    if (this.y < 0 || this.y > h) { this.vy *= -1;
+                        this.y = Math.max(0, Math.min(h, this.y)); }
+                    // mouse influence
+                    if (mouse.x !== null) {
+                        const dx = mouse.x - this.x;
+                        const dy = mouse.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 200) {
+                            const force = (200 - dist) / 200 * 0.02;
+                            this.vx += dx * force * 0.0005;
+                            this.vy += dy * force * 0.0005;
+                        }
+                    }
+                    // damping
+                    this.vx *= 0.999;
+                    this.vy *= 0.999;
+                    // speed limit
+                    const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    if (speed > 0.5) {
+                        this.vx = (this.vx / speed) * 0.5;
+                        this.vy = (this.vy / speed) * 0.5;
+                    }
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 229, 255, ${this.opacity})`;
+                    ctx.fill();
+                    // glow
+                    ctx.shadowColor = 'rgba(0, 229, 255, 0.2)';
+                    ctx.shadowBlur = 12;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                particles.push(new Particle());
+            }
+
+            function drawLines() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < CONNECTION_DIST) {
+                            const alpha = (1 - dist / CONNECTION_DIST) * 0.25;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                            // magenta accent for close connections
+                            if (dist < CONNECTION_DIST * 0.3) {
+                                ctx.strokeStyle = `rgba(255, 0, 184, ${alpha * 0.5})`;
+                                ctx.lineWidth = 0.8;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                }
+                // mouse connections
+                if (mouse.x !== null) {
+                    for (let p of particles) {
+                        const dx = mouse.x - p.x;
+                        const dy = mouse.y - p.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < CONNECTION_DIST) {
+                            const alpha = (1 - dist / CONNECTION_DIST) * 0.3;
+                            ctx.beginPath();
+                            ctx.moveTo(mouse.x, mouse.y);
+                            ctx.lineTo(p.x, p.y);
+                            ctx.strokeStyle = `rgba(255, 0, 184, ${alpha})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => p.update());
+                particles.forEach(p => p.draw());
+                drawLines();
+                requestAnimationFrame(animate);
+            }
+
+            canvas.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+            canvas.addEventListener('mouseleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            animate();
+        })();
+
+        // ============================================================
+        // 2. LIVE CLOCK
+        // ============================================================
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('liveClock').textContent = `${h}:${m}:${s}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================================
+        // 3. BASE DE DONNÉES (ARCHIVES)
         // ============================================================
         const LEAK_DB = [
-            { id: "001", title: "Leak School FR", category: "School FR", date: "2026-07-23",
-            status: "Vérifié", link: "https://mega.nz/file/c31iEZJA#2i5_sAn8t9SIyGNV5CKhhQx2HSits9OV5Ch2WCUpNfQ" },
-            //{ id: "002", title: "BASE_ELEVES_TERMINALE_2026.sql", category: "School FR", date: "2026-07-20",
-            //status: "Non vérifié", link: "#" },
-            //{ id: "002", title: "BASE_ELEVES_TERMINALE_2026.sql", category: "School FR", date: "2026-07-20",
-            //status: "Vérifié", link: "#" },
+            { id: "001", title: "Leak School FR", category: "School FR", date: "2026-07-23", status: "Vérifié",
+            link: "https://mega.nz/file/c31iEZJA#2i5_sAn8t9SIyGNV5CKhhQx2HSits9OV5Ch2WCUpNfQ" },
         ];
 
         // ============================================================
-        // 1.5 BASE DE L'ÉQUIPE (AVEC AVATARS)
+        // 4. BASE DE L'ÉQUIPE (AVEC AVATARS)
         // ============================================================
         const TEAM_DB = [
-            { id: 1, name: "Exiozz", role: "Owner", avatar: "https://i.imgur.com/PGs3Ksh.gif" },
-            { id: 2, name: "Nyrozz†", role: "Founder", avatar: "https://i.imgur.com/JMBZ709.gif" },
+            { id: 1, name: "Exiozz - zo7q", role: "Owner", avatar: "https://i.imgur.com/PGs3Ksh.gif" },
+            { id: 2, name: "Nyrozz† - itsnyrozz._", role: "Founder", avatar: "https://i.imgur.com/JMBZ709.gif" },
         ];
 
-        // Mapping des couleurs par rôle
         const roleColors = {
             'Owner': 'owner',
             'Leaker': 'leaker',
             'Contributor': 'contributor',
             'Admin': 'admin',
             'Moderator': 'moderator',
-            'Founder': 'founder'
+            'Founder': 'founder',
+            'Archivist': 'archivist',
+            'Security': 'security'
         };
 
         // ============================================================
-        // 2. NAVIGATION
+        // 5. NAVIGATION
         // ============================================================
         const pages = {
             'page-accueil': document.getElementById('page-accueil'),
@@ -1306,7 +1733,8 @@
             'page-stats': document.getElementById('page-stats'),
             'page-team': document.getElementById('page-team'),
             'page-contact': document.getElementById('page-contact'),
-            'page-about': document.getElementById('page-about')
+            'page-about': document.getElementById('page-about'),
+            'page-assistance': document.getElementById('page-assistance')
         };
         const navLinks = document.querySelectorAll('.navbar a[data-page]');
         navLinks.forEach(link => {
@@ -1332,51 +1760,81 @@
         }
 
         // ============================================================
-        // 3. RENDU TABLEAU + STATS + SURBRILLANCE
+        // 6. RENDU TABLEAU + STATS
         // ============================================================
         let currentSort = { key: 'id', asc: true };
         let currentFilteredData = [];
 
+        function populateCategoryFilter() {
+            const select = document.getElementById('categoryFilter');
+            const categories = [...new Set(LEAK_DB.map(item => item.category))];
+            select.innerHTML = '<option value="all">📂 Toutes les catégories</option>';
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                select.appendChild(option);
+            });
+        }
 
         function renderTable(data, searchTerm = '') {
-    const tbody = document.getElementById('leakTableBody');
-    tbody.innerHTML = '';
-    if (data.length === 0) {
-        tbody.innerHTML =
-            `<tr><td colspan="6" style="text-align:center;color:#2a5a6a;">Aucune archive trouvée.</td></tr>`;
-        return;
-    }
-    data.forEach(item => {
-        const tr = document.createElement('tr');
-        const statusClass = item.status === 'Vérifié' ? 'status-verified' : 'status-unverified';
-        let titleDisplay = item.title;
-        if (searchTerm) {
-            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            titleDisplay = item.title.replace(regex, '<span class="highlight">$1</span>');
+            const tbody = document.getElementById('leakTableBody');
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="6" style="text-align:center;color:#2a5a6a;">Aucune archive trouvée.</td></tr>`;
+                return;
+            }
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                const statusClass = item.status === 'Vérifié' ? 'status-verified' : 'status-unverified';
+                let titleDisplay = item.title;
+                if (searchTerm) {
+                    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    titleDisplay = item.title.replace(regex, '<span class="highlight">$1</span>');
+                }
+                tr.innerHTML = `
+                    <td><strong>#${item.id}</strong></td>
+                    <td><i class="fas fa-file"></i> ${titleDisplay}</td>
+                    <td><span class="tag">${item.category}</span></td>
+                    <td>${item.date}</td>
+                    <td><span class="${statusClass}">${item.status === 'Vérifié' ? '✅' : '❌'} ${item.status}</span></td>
+                    <td><a href="${item.link}" download target="_blank" class="btn-sm"><i class="fas fa-download"></i></a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateStats(data);
+            updateCharts(data);
         }
-        tr.innerHTML = `
-    <td><strong>#${item.id}</strong></td>
-    <td><i class="fas fa-file"></i> ${titleDisplay}</td>
-    <td><span class="tag">${item.category}</span></td>
-    <td>${item.date}</td>
-    <td><span class="${statusClass}">${item.status === 'Vérifié' ? '✅' : '❌'} ${item.status}</span></td>
-    <td><a href="${item.link}" download target="_blank" class="btn-sm"><i class="fas fa-download"></i></a></td>
-`;
-        tbody.appendChild(tr);
-    });
-    updateStats(data);
-    updateCharts(data);
-}
 
         function updateStats(data) {
-            document.getElementById('totalLeaks').textContent = data.length;
+            animateNumber('totalLeaks', data.length);
             const categories = new Set(data.map(d => d.category));
-            document.getElementById('totalCategories').textContent = categories.size;
-            document.getElementById('verifiedCount').textContent = data.filter(d => d.status === 'Vérifié').length;
+            animateNumber('totalCategories', categories.size);
+            animateNumber('verifiedCount', data.filter(d => d.status === 'Vérifié').length);
+            // tool count is static
+            document.getElementById('toolCount').textContent = '10';
+        }
+
+        function animateNumber(id, target) {
+            const el = document.getElementById(id);
+            const current = parseInt(el.textContent) || 0;
+            const diff = target - current;
+            if (diff === 0) return;
+            const step = Math.ceil(Math.abs(diff) / 20) * Math.sign(diff) || 1;
+            let val = current;
+            const interval = setInterval(() => {
+                val += step;
+                if (Math.abs(val - target) <= Math.abs(step)) {
+                    val = target;
+                    clearInterval(interval);
+                }
+                el.textContent = val;
+            }, 30);
         }
 
         // ============================================================
-        // 4. RENDU ÉQUIPE (AVEC AVATARS)
+        // 7. RENDU ÉQUIPE
         // ============================================================
         function renderTeam() {
             const grid = document.getElementById('teamGrid');
@@ -1385,7 +1843,6 @@
 
             TEAM_DB.forEach(member => {
                 const roleClass = roleColors[member.role] || 'contributor';
-
                 const card = document.createElement('div');
                 card.className = 'team-card';
                 card.innerHTML = `
@@ -1400,49 +1857,40 @@
         }
 
         // ============================================================
-        // 5. CONTACT / ACCÈS (STATIC)
+        // 8. CONTACT / ACCÈS
         // ============================================================
         function updateContactStats() {
             document.getElementById('discordLink').href = DISCORD_INVITE_LINK;
-
             document.getElementById('currentMembers').textContent = STATIC_CURRENT_MEMBERS;
             document.getElementById('maxMembers').textContent = STATIC_MAX_MEMBERS;
 
             const available = STATIC_MAX_MEMBERS - STATIC_CURRENT_MEMBERS;
             const spotEl = document.getElementById('availableSpots');
             spotEl.textContent = available;
-            if (available <= 2) {
-                spotEl.className = 'value danger';
-            } else if (available <= 5) {
-                spotEl.className = 'value warning';
-            } else {
-                spotEl.className = 'value';
-            }
+            if (available <= 2) spotEl.className = 'value danger';
+            else if (available <= 5) spotEl.className = 'value warning';
+            else spotEl.className = 'value';
 
             const now = new Date();
             const diff = STATIC_RESET_DATE - now;
-
             if (diff <= 0) {
                 document.getElementById('resetCountdown').textContent = '🔴 RESET EN COURS';
                 document.getElementById('resetCountdown').style.color = '#ff3b3b';
                 return;
             }
-
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             const countdownStr =
                 `${String(days).padStart(2, '0')}j ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
             document.getElementById('resetCountdown').textContent = countdownStr;
             document.getElementById('resetCountdown').style.color = '#ffaa00';
         }
-
         setInterval(updateContactStats, 1000);
 
         // ============================================================
-        // 6. TRI & FILTRES
+        // 9. TRI & FILTRES
         // ============================================================
         function filterAndSort() {
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -1475,12 +1923,9 @@
         document.querySelectorAll('th[data-sort]').forEach(th => {
             th.addEventListener('click', function() {
                 const key = this.dataset.sort;
-                if (currentSort.key === key) {
-                    currentSort.asc = !currentSort.asc;
-                } else {
-                    currentSort.key = key;
-                    currentSort.asc = true;
-                }
+                if (currentSort.key === key) currentSort.asc = !currentSort.asc;
+                else { currentSort.key = key;
+                    currentSort.asc = true; }
                 filterAndSort();
             });
         });
@@ -1490,25 +1935,12 @@
         document.getElementById('statusFilter').addEventListener('change', filterAndSort);
 
         // ============================================================
-        // 7. POPULATE CATEGORY FILTER
+        // 10. POPULATE CATEGORY FILTER
         // ============================================================
-        function populateCategoryFilter() {
-            const select = document.getElementById('categoryFilter');
-            const categories = [...new Set(LEAK_DB.map(item => item.category))];
-            const allOption = select.querySelector('option[value="all"]');
-            select.innerHTML = '';
-            select.appendChild(allOption);
-            categories.forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat;
-                option.textContent = `🏫 ${cat}`;
-                select.appendChild(option);
-            });
-        }
         populateCategoryFilter();
 
         // ============================================================
-        // 8. GRAPHIQUES STATS
+        // 11. GRAPHIQUES STATS
         // ============================================================
         function updateCharts(data) {
             const container = document.getElementById('statsChartsContainer');
@@ -1558,7 +1990,7 @@
         }
 
         // ============================================================
-        // 9. ACTIVITY FEED
+        // 12. ACTIVITY FEED
         // ============================================================
         function addFeedItem(msg, icon = 'fa-circle') {
             const feed = document.getElementById('activityFeed');
@@ -1568,11 +2000,8 @@
             item.innerHTML = `<span class="time">[${time}]</span><span class="msg"><i class="fas ${icon}"></i> ${msg}</span>`;
             feed.appendChild(item);
             feed.scrollTop = feed.scrollHeight;
-            if (feed.children.length > 20) {
-                feed.removeChild(feed.children[0]);
-            }
+            if (feed.children.length > 20) feed.removeChild(feed.children[0]);
         }
-
         setInterval(() => {
             const actions = [
                 'Requête OSINT envoyée vers le serveur.',
@@ -1580,16 +2009,17 @@
                 'Mise à jour des signatures de sécurité.',
                 'Scan du périmètre terminé.',
                 'Nouvelle archive indexée dans la base.',
-                'Vérification des intégrités...'
+                'Vérification des intégrités...',
+                'Connexion sécurisée établie.',
+                'Synchronisation des données...'
             ];
             const msg = actions[Math.floor(Math.random() * actions.length)];
             addFeedItem(msg, 'fa-sync-alt');
         }, 4500);
 
         // ============================================================
-        // 10. OSINT TOOLS (10 Modules)
+        // 13. OSINT TOOLS (10 Modules)
         // ============================================================
-
         function lookupIP() {
             const ip = document.getElementById('ipInput').value.trim();
             const output = document.getElementById('ipOutput');
@@ -1768,23 +2198,46 @@
         }
 
         // ============================================================
-        // 11. LOADING SCREEN HIDE
+        // 14. ASSISTANCE : ENVOI DE FORMULAIRE
+        // ============================================================
+        function sendAssistanceMail(e) {
+            e.preventDefault();
+            const pseudo = document.getElementById('contactPseudo').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+            if (!pseudo || !message) {
+                alert('Veuillez remplir les champs obligatoires (pseudo et message).');
+                return false;
+            }
+            const subject = encodeURIComponent(`[ECHO_VAULT] Assistance - ${pseudo}`);
+            const body = encodeURIComponent(
+                `Pseudo : ${pseudo}\nEmail : ${email || 'Non fourni'}\n\nMessage :\n${message}`
+            );
+            window.location.href = `mailto:contact@echovault.com?subject=${subject}&body=${body}`;
+            alert('✅ Votre message a été ouvert dans votre client email. Merci de l\'envoyer.');
+            return false;
+        }
+
+        // ============================================================
+        // 15. LOADING SCREEN HIDE
         // ============================================================
         window.addEventListener('load', function() {
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
                 addFeedItem('Système opérationnel. Bienvenue, opérateur.', 'fa-check-circle');
+                addFeedItem('Réseau de particules actif.', 'fa-network-wired');
                 updateContactStats();
-            }, 1500);
+            }, 1800);
         });
 
         // ============================================================
-        // 12. INIT
+        // 16. INIT
         // ============================================================
         renderTeam();
         filterAndSort();
-        console.log('%c👁️ ECHO_VAULT v4.2 "TEAM EDITION" LOADED', 'color: #00e5ff; font-size: 16px; font-weight: bold;');
+        console.log('%c👁️ ECHO_VAULT v4.3 "PARTICLE NETWORK EDITION" LOADED', 'color: #00e5ff; font-size: 16px; font-weight: bold;');
         console.log('%c🔧 Modifiez LEAK_DB, TEAM_DB et les variables STATIC_* pour gérer vos données.', 'color: #4a8a9a;');
+        console.log('%c✨ Fond d\'écran : réseau de particules interactif.', 'color: #4a8a9a;');
     </script>
 </body>
 </html>
